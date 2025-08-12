@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Cafe Rápida - Inicio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}" />
+</head>
+<body>
+    <header>
+        <h1>☕ Cafe Rápida ☕</h1>
+    </header>
+    <main>
+        <img src="{{ url_for('static', filename='img/hamburguesa.jpg') }}" alt="Logo Hamburguesa" class="logo" />
+        <br /><br />
+        <a href="{{ url_for('login') }}" class="boton">Iniciar Sesión Institucional</a>
+    </main>
+</body>
+</html>
+
+<h2>Inicia Sesión Para Ver Nuestro Menú del Día</h2>
+{% set categoria_actual = None %}
+<div class="productos">
+    {% for p in productos %}
+        {% if categoria_actual != p.categoria %}
+            {% if not loop.first %}</div>{% endif %}
+            <h3 class="categoria">{{ p.categoria }}</h3>
+            <div class="categoria-productos">
+            {% set categoria_actual = p.categoria %}
+        {% endif %}
+        <div class="producto">
+            <img src="{{ url_for('static', filename=p.imagen) }}" alt="{{ p.nombre }}">
+            <h4>{{ p.nombre }}</h4>
+            <p>{{ p.descripcion }}</p>
+            <p>Precio: ${{ p.precio }}</p>
+            <p>Disponibles: {{ p.unidades }}</p>
+            <button class="btn-agregar">🛒 Agregar</button>
+        </div>
+    {% endfor %}
+</div>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel de Control - Café Rápida</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 30px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #eee;
+        }
+        a, button {
+            margin-right: 5px;
+        }
+        .categoria {
+            background-color: #f7f7f7;
+            padding: 10px;
+            margin-top: 30px;
+        }
+        img {
+            max-width: 100px;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Panel de Control - Cafe Rápida</h1>
+
+    <p><a href="{{ url_for('agregar') }}">➕ Agregar Producto</a> | 
+       <a href="{{ url_for('logout') }}">🔒 Cerrar sesión</a></p>
+
+    {% set categorias = {} %}
+    {% for producto in productos %}
+        {% if producto.categoria not in categorias %}
+            {% set categorias = categorias.update({producto.categoria: []}) or categorias %}
+        {% endif %}
+        {% set _ = categorias[producto.categoria].append(producto) %}
+    {% endfor %}
+
+    {% for categoria, items in categorias.items() %}
+        <div class="categoria">
+            <h2>{{ categoria }}</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Imagen</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Precio</th>
+                        <th>Unidades</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for producto in items %}
+                        <tr>
+                            <td><img src="{{ url_for('static', filename=producto.imagen) }}" alt="{{ producto.nombre }}"></td>
+                            <td>{{ producto.nombre }}</td>
+                            <td>{{ producto.descripcion }}</td>
+                            <td>${{ producto.precio }}</td>
+                            <td>{{ producto.unidades }}</td>
+                            <td>
+                                <a href="{{ url_for('editar', id=producto.id) }}">✏️ Editar</a>
+                                <form action="{{ url_for('eliminar', id=producto.id) }}" method="POST" style="display:inline;">
+                                    <button type="submit" onclick="return confirm('¿Eliminar este producto?')">🗑️ Eliminar</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endfor %}
+
+</body>
+</html>
